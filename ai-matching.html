@@ -1,0 +1,398 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>AI Image Matching - TrackMyStuff</title>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <style>
+        /* Base styles from previous pages */
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Inter', sans-serif;
+        }
+
+        body {
+            background-color: #0B0B1D;
+            color: #ffffff;
+            line-height: 1.6;
+            overflow-x: hidden;
+        }
+
+        header {
+            position: fixed;
+            top: 20px;
+            left: 50%;
+            transform: translateX(-50%);
+            width: calc(100% - 40px);
+            max-width: 1400px;
+            padding: 16px 24px;
+            background: rgba(11, 11, 29, 0.7);
+            backdrop-filter: blur(10px);
+            z-index: 1000;
+            border: 1px solid rgba(193, 194, 250, 0.1);
+            border-radius: 24px;
+        }
+
+        /* Navigation styles */
+        nav {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .logo {
+            font-size: 1.5rem;
+            font-weight: 700;
+            color: #ffffff;
+            text-decoration: none;
+        }
+
+        .nav-links {
+            display: flex;
+            gap: 32px;
+            align-items: center;
+        }
+
+        .nav-link {
+            color: rgba(255, 255, 255, 0.7);
+            text-decoration: none;
+            font-size: 0.95rem;
+            font-weight: 500;
+            transition: color 0.3s ease;
+        }
+
+        /* AI Matching specific styles */
+        .main-content {
+            padding: 120px 20px 40px;
+            max-width: 1400px;
+            margin: 0 auto;
+        }
+
+        .page-title {
+            font-size: 2.5rem;
+            font-weight: 700;
+            margin-bottom: 30px;
+            background: linear-gradient(135deg, #FFFFFF 0%, #C1C2FA 100%);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+        }
+
+        .upload-section {
+            background: rgba(193, 194, 250, 0.03);
+            border: 1px solid rgba(193, 194, 250, 0.1);
+            border-radius: 24px;
+            padding: 40px;
+            margin: 0 auto 40px;
+            max-width: 800px;
+            text-align: center;
+        }
+
+        .upload-area {
+            border: 2px dashed rgba(193, 194, 250, 0.3);
+            border-radius: 16px;
+            padding: 40px;
+            margin: 20px auto;
+            max-width: 600px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+
+        .upload-area:hover {
+            border-color: #C1C2FA;
+            background: rgba(193, 194, 250, 0.05);
+        }
+
+        .upload-icon {
+            font-size: 3rem;
+            margin-bottom: 20px;
+            color: #C1C2FA;
+        }
+
+        .upload-text {
+            color: rgba(255, 255, 255, 0.9);
+            margin-bottom: 10px;
+        }
+
+        .upload-subtext {
+            color: rgba(255, 255, 255, 0.6);
+            font-size: 0.9rem;
+        }
+
+        .matches-section {
+            display: none;
+            margin-top: 40px;
+            opacity: 0;
+            transform: translateY(20px);
+            transition: all 0.5s ease;
+        }
+
+        .matches-section.show {
+            display: block;
+            opacity: 1;
+            transform: translateY(0);
+        }
+
+        .matches-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+            gap: 24px;
+            margin-top: 20px;
+        }
+
+        .match-card {
+            background: rgba(193, 194, 250, 0.03);
+            border: 1px solid rgba(193, 194, 250, 0.1);
+            border-radius: 16px;
+            padding: 20px;
+            transition: all 0.3s ease;
+        }
+
+        .match-card:hover {
+            transform: translateY(-5px);
+            border-color: rgba(193, 194, 250, 0.2);
+            background: rgba(193, 194, 250, 0.05);
+        }
+
+        .match-image {
+            width: 100%;
+            height: 200px;
+            border-radius: 12px;
+            object-fit: cover;
+            margin-bottom: 16px;
+        }
+
+        .match-percentage {
+            display: inline-block;
+            padding: 6px 12px;
+            border-radius: 20px;
+            font-size: 0.9rem;
+            font-weight: 500;
+            margin-bottom: 12px;
+            background: rgba(193, 194, 250, 0.1);
+            color: #C1C2FA;
+        }
+
+        .match-details {
+            margin-bottom: 16px;
+        }
+
+        .match-title {
+            font-size: 1.1rem;
+            font-weight: 600;
+            margin-bottom: 8px;
+        }
+
+        .match-description {
+            color: rgba(255, 255, 255, 0.7);
+            font-size: 0.9rem;
+        }
+
+        .scan-btn {
+            background: #C1C2FA;
+            color: #0B0B1D;
+            padding: 12px 24px;
+            border: none;
+            border-radius: 12px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            margin-top: 20px;
+        }
+
+        .scan-btn:hover {
+            transform: translateY(-2px);
+            opacity: 0.9;
+        }
+
+        .processing-indicator {
+            display: none;
+            margin-top: 20px;
+            text-align: center;
+        }
+
+        .spinner {
+            border: 3px solid rgba(193, 194, 250, 0.1);
+            border-top: 3px solid #C1C2FA;
+            border-radius: 50%;
+            width: 24px;
+            height: 24px;
+            animation: spin 1s linear infinite;
+            margin: 0 auto 10px;
+        }
+
+        @keyframes spin {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
+        }
+
+        /* Add responsive adjustments */
+        @media (max-width: 850px) {
+            .upload-section {
+                max-width: 100%;
+            }
+            
+            .upload-area {
+                max-width: 100%;
+            }
+        }
+    </style>
+</head>
+<body>
+    <header>
+        <nav>
+            <a href="index.html" class="logo">TrackMyStuff</a>
+            <div class="nav-links">
+                <a href="lost-and-found.html" class="nav-link">Features</a>
+                <a href="#" class="nav-link">About</a>
+                <a href="#" class="nav-link">Contact</a>
+            </div>
+        </nav>
+    </header>
+
+    <main class="main-content">
+        <h1 class="page-title">AI Image Matching</h1>
+        
+        <div class="upload-section">
+            <h2>Upload Item Image</h2>
+            <div class="upload-area" id="dropZone">
+                <div class="upload-icon">📸</div>
+                <p class="upload-text">Drag and drop your image here</p>
+                <p class="upload-subtext">or click to browse files</p>
+                <input type="file" id="fileInput" style="display: none" accept="image/*">
+            </div>
+            <button class="scan-btn">Scan for Matches</button>
+            
+            <div class="processing-indicator">
+                <div class="spinner"></div>
+                <p>Processing image and searching for matches...</p>
+            </div>
+        </div>
+
+        <div class="matches-section">
+            <h2>Potential Matches</h2>
+            <div class="matches-grid">
+                <div class="match-card">
+                    <img src="https://via.placeholder.com/300x200" alt="Match" class="match-image">
+                    <span class="match-percentage">95% Match</span>
+                    <div class="match-details">
+                        <h3 class="match-title">Black Laptop Bag</h3>
+                        <p class="match-description">Found in Library, 2nd Floor</p>
+                    </div>
+                    <button class="scan-btn">View Details</button>
+                </div>
+
+                <div class="match-card">
+                    <img src="https://via.placeholder.com/300x200" alt="Match" class="match-image">
+                    <span class="match-percentage">87% Match</span>
+                    <div class="match-details">
+                        <h3 class="match-title">Similar Laptop Bag</h3>
+                        <p class="match-description">Found in Cafeteria</p>
+                    </div>
+                    <button class="scan-btn">View Details</button>
+                </div>
+
+                <div class="match-card">
+                    <img src="https://via.placeholder.com/300x200" alt="Match" class="match-image">
+                    <span class="match-percentage">82% Match</span>
+                    <div class="match-details">
+                        <h3 class="match-title">Dark Backpack</h3>
+                        <p class="match-description">Found in Room 201</p>
+                    </div>
+                    <button class="scan-btn">View Details</button>
+                </div>
+            </div>
+        </div>
+    </main>
+
+    <script>
+        const dropZone = document.getElementById('dropZone');
+        const fileInput = document.getElementById('fileInput');
+        const processingIndicator = document.querySelector('.processing-indicator');
+        const matchesSection = document.querySelector('.matches-section');
+
+        // Handle click on drop zone
+        dropZone.addEventListener('click', () => {
+            fileInput.click();
+        });
+
+        // Handle drag and drop
+        dropZone.addEventListener('dragover', (e) => {
+            e.preventDefault();
+            dropZone.style.borderColor = '#C1C2FA';
+            dropZone.style.background = 'rgba(193, 194, 250, 0.05)';
+        });
+
+        dropZone.addEventListener('dragleave', () => {
+            dropZone.style.borderColor = 'rgba(193, 194, 250, 0.3)';
+            dropZone.style.background = 'transparent';
+        });
+
+        dropZone.addEventListener('drop', (e) => {
+            e.preventDefault();
+            const files = e.dataTransfer.files;
+            handleFiles(files);
+        });
+
+        fileInput.addEventListener('change', (e) => {
+            handleFiles(e.target.files);
+        });
+
+        function handleFiles(files) {
+            if (files.length > 0) {
+                const file = files[0];
+                if (file.type.startsWith('image/')) {
+                    // Hide matches if they were previously shown
+                    matchesSection.classList.remove('show');
+                    
+                    // Show processing indicator
+                    processingIndicator.style.display = 'block';
+                    
+                    // Create preview of uploaded image
+                    const reader = new FileReader();
+                    reader.onload = function(e) {
+                        dropZone.innerHTML = `
+                            <img src="${e.target.result}" alt="Uploaded Image" 
+                                 style="max-width: 100%; max-height: 200px; border-radius: 12px;">
+                            <p class="upload-text" style="margin-top: 15px;">Image uploaded successfully</p>
+                        `;
+                    }
+                    reader.readAsDataURL(file);
+                    
+                    // Simulate AI processing delay
+                    setTimeout(() => {
+                        // Hide processing indicator
+                        processingIndicator.style.display = 'none';
+                        
+                        // Show matches section with animation
+                        matchesSection.classList.add('show');
+                        
+                        // Scroll to matches section
+                        matchesSection.scrollIntoView({ behavior: 'smooth', block: 'start' });
+                    }, 2000);
+                } else {
+                    alert('Please upload an image file');
+                }
+            }
+        }
+
+        // Reset upload area when clicking "Scan for Matches" again
+        document.querySelector('.scan-btn').addEventListener('click', () => {
+            if (fileInput.files.length > 0) {
+                // Reset the upload area
+                dropZone.innerHTML = `
+                    <div class="upload-icon">📸</div>
+                    <p class="upload-text">Drag and drop your image here</p>
+                    <p class="upload-subtext">or click to browse files</p>
+                `;
+                fileInput.value = '';
+                matchesSection.classList.remove('show');
+            } else {
+                fileInput.click();
+            }
+        });
+    </script>
+</body>
+</html> 
