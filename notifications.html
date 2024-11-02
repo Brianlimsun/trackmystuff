@@ -1,0 +1,338 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Notifications - TrackMyStuff</title>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Inter', sans-serif;
+        }
+
+        body {
+            background-color: #0B0B1D;
+            color: #ffffff;
+            line-height: 1.6;
+            overflow-x: hidden;
+        }
+
+        header {
+            position: fixed;
+            top: 20px;
+            left: 50%;
+            transform: translateX(-50%);
+            width: calc(100% - 40px);
+            max-width: 1400px;
+            padding: 16px 24px;
+            background: rgba(11, 11, 29, 0.7);
+            backdrop-filter: blur(10px);
+            z-index: 1000;
+            border: 1px solid rgba(193, 194, 250, 0.1);
+            border-radius: 24px;
+        }
+
+        nav {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            max-width: 1400px;
+            margin: 0 auto;
+        }
+
+        .logo {
+            font-size: 1.5rem;
+            font-weight: 700;
+            color: #ffffff;
+            text-decoration: none;
+        }
+
+        .nav-links {
+            display: flex;
+            gap: 32px;
+            align-items: center;
+        }
+
+        .nav-link {
+            color: rgba(255, 255, 255, 0.7);
+            text-decoration: none;
+            font-size: 0.95rem;
+            font-weight: 500;
+            transition: color 0.3s ease;
+            position: relative;
+        }
+
+        .nav-link::after {
+            content: '';
+            position: absolute;
+            bottom: -4px;
+            left: 0;
+            width: 0;
+            height: 2px;
+            background: #C1C2FA;
+            transition: width 0.3s ease;
+        }
+
+        .nav-link:hover::after {
+            width: 100%;
+        }
+
+        .nav-link:hover {
+            color: #C1C2FA;
+        }
+
+        .menu-button {
+            display: none;
+            background: none;
+            border: none;
+            color: white;
+            font-size: 1.5rem;
+            cursor: pointer;
+        }
+
+        .main-content {
+            padding: 120px 20px 40px;
+            max-width: 1400px;
+            margin: 0 auto;
+        }
+
+        .page-title {
+            font-size: 2.5rem;
+            font-weight: 700;
+            margin-bottom: 30px;
+            background: linear-gradient(135deg, #FFFFFF 0%, #C1C2FA 100%);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+        }
+
+        .notifications-container {
+            display: flex;
+            flex-direction: column;
+            gap: 16px;
+        }
+
+        .notification-card {
+            background: rgba(193, 194, 250, 0.03);
+            border: 1px solid rgba(193, 194, 250, 0.1);
+            border-radius: 16px;
+            padding: 20px;
+            transition: all 0.3s ease;
+            display: flex;
+            align-items: center;
+            gap: 20px;
+        }
+
+        .notification-card:hover {
+            transform: translateX(5px);
+            border-color: rgba(193, 194, 250, 0.2);
+            background: rgba(193, 194, 250, 0.05);
+        }
+
+        .notification-icon {
+            width: 48px;
+            height: 48px;
+            border-radius: 50%;
+            background: rgba(193, 194, 250, 0.1);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 1.5rem;
+        }
+
+        .notification-content {
+            flex: 1;
+        }
+
+        .notification-title {
+            font-size: 1.1rem;
+            font-weight: 600;
+            margin-bottom: 4px;
+            color: #C1C2FA;
+        }
+
+        .notification-message {
+            font-size: 0.95rem;
+            color: rgba(255, 255, 255, 0.7);
+            margin-bottom: 8px;
+        }
+
+        .notification-time {
+            font-size: 0.85rem;
+            color: rgba(255, 255, 255, 0.5);
+        }
+
+        .notification-actions {
+            display: flex;
+            gap: 12px;
+        }
+
+        .action-btn {
+            padding: 8px 16px;
+            border-radius: 8px;
+            font-size: 0.9rem;
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+
+        .primary-action {
+            background: #C1C2FA;
+            color: #0B0B1D;
+            border: none;
+        }
+
+        .secondary-action {
+            background: transparent;
+            color: #C1C2FA;
+            border: 1px solid #C1C2FA;
+        }
+
+        .notification-filters {
+            display: flex;
+            gap: 16px;
+            margin-bottom: 30px;
+        }
+
+        .filter-btn {
+            padding: 8px 16px;
+            border-radius: 12px;
+            background: transparent;
+            border: 1px solid rgba(193, 194, 250, 0.3);
+            color: rgba(255, 255, 255, 0.7);
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+
+        .filter-btn.active {
+            background: #C1C2FA;
+            color: #0B0B1D;
+            border-color: #C1C2FA;
+        }
+
+        .filter-btn:hover {
+            border-color: #C1C2FA;
+            color: #C1C2FA;
+        }
+
+        @media (max-width: 768px) {
+            .nav-links {
+                display: none;
+            }
+
+            .menu-button {
+                display: block;
+            }
+
+            .notification-card {
+                flex-direction: column;
+                align-items: flex-start;
+            }
+
+            .notification-actions {
+                width: 100%;
+                flex-direction: column;
+            }
+
+            .notification-filters {
+                flex-wrap: wrap;
+            }
+        }
+    </style>
+</head>
+<body>
+    <header>
+        <nav>
+            <a href="index.html" class="logo">TrackMyStuff</a>
+            <div class="nav-links">
+                <a href="lost-and-found.html" class="nav-link">Features</a>
+                <a href="#" class="nav-link">About</a>
+                <a href="#" class="nav-link">Contact</a>
+            </div>
+            <button class="menu-button">☰</button>
+        </nav>
+    </header>
+
+    <main class="main-content">
+        <h1 class="page-title">Notifications</h1>
+
+        <div class="notification-filters">
+            <button class="filter-btn active">All</button>
+            <button class="filter-btn">Lost & Found</button>
+            <button class="filter-btn">Payments</button>
+            <button class="filter-btn">System</button>
+        </div>
+
+        <div class="notifications-container">
+            <!-- Lost Item Match Notification -->
+            <div class="notification-card">
+                <div class="notification-icon">🔍</div>
+                <div class="notification-content">
+                    <h3 class="notification-title">Potential Match Found</h3>
+                    <p class="notification-message">A black laptop bag matching your lost item description has been reported found in the library.</p>
+                    <p class="notification-time">2 minutes ago</p>
+                </div>
+                <div class="notification-actions">
+                    <button class="action-btn primary-action">View Match</button>
+                    <button class="action-btn secondary-action">Dismiss</button>
+                </div>
+            </div>
+
+            <!-- Payment Reminder Notification -->
+            <div class="notification-card">
+                <div class="notification-icon">💰</div>
+                <div class="notification-content">
+                    <h3 class="notification-title">Payment Due Soon</h3>
+                    <p class="notification-message">Your semester fee payment of ₹15,000 is due in 5 days.</p>
+                    <p class="notification-time">1 hour ago</p>
+                </div>
+                <div class="notification-actions">
+                    <button class="action-btn primary-action">Pay Now</button>
+                    <button class="action-btn secondary-action">Remind Later</button>
+                </div>
+            </div>
+
+            <!-- Found Item Claimed Notification -->
+            <div class="notification-card">
+                <div class="notification-icon">✅</div>
+                <div class="notification-content">
+                    <h3 class="notification-title">Item Claimed</h3>
+                    <p class="notification-message">The iPhone 13 Pro you reported has been claimed by its owner.</p>
+                    <p class="notification-time">2 hours ago</p>
+                </div>
+                <div class="notification-actions">
+                    <button class="action-btn secondary-action">View Details</button>
+                </div>
+            </div>
+
+            <!-- System Notification -->
+            <div class="notification-card">
+                <div class="notification-icon">🔔</div>
+                <div class="notification-content">
+                    <h3 class="notification-title">Profile Updated</h3>
+                    <p class="notification-message">Your contact information has been successfully updated.</p>
+                    <p class="notification-time">1 day ago</p>
+                </div>
+                <div class="notification-actions">
+                    <button class="action-btn secondary-action">Dismiss</button>
+                </div>
+            </div>
+        </div>
+    </main>
+
+    <script>
+        // Add any necessary JavaScript here
+        document.querySelectorAll('.filter-btn').forEach(button => {
+            button.addEventListener('click', () => {
+                // Remove active class from all buttons
+                document.querySelectorAll('.filter-btn').forEach(btn => {
+                    btn.classList.remove('active');
+                });
+                // Add active class to clicked button
+                button.classList.add('active');
+            });
+        });
+    </script>
+</body>
+</html> 
