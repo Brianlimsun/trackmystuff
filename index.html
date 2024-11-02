@@ -1,0 +1,469 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>TrackMyStuff - Smart Item Management System</title>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Inter', sans-serif;
+        }
+
+        body {
+            background-color: #0B0B1D;
+            color: #ffffff;
+            line-height: 1.6;
+            overflow-x: hidden;
+        }
+
+        header {
+            position: fixed;
+            top: 20px;
+            left: 50%;
+            transform: translateX(-50%);
+            width: calc(100% - 40px);
+            max-width: 1400px;
+            padding: 16px 24px;
+            background: rgba(11, 11, 29, 0.7);
+            backdrop-filter: blur(10px);
+            z-index: 1000;
+            border: 1px solid rgba(193, 194, 250, 0.1);
+            border-radius: 24px;
+        }
+
+        nav {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            max-width: 1400px;
+            margin: 0 auto;
+        }
+
+        .logo {
+            font-size: 1.5rem;
+            font-weight: 700;
+            color: #ffffff;
+            text-decoration: none;
+        }
+
+        .nav-links {
+            display: flex;
+            gap: 32px;
+            align-items: center;
+        }
+
+        .nav-link {
+            color: rgba(255, 255, 255, 0.7);
+            text-decoration: none;
+            font-size: 0.95rem;
+            font-weight: 500;
+            transition: color 0.3s ease;
+            position: relative;
+        }
+
+        .nav-link::after {
+            content: '';
+            position: absolute;
+            bottom: -4px;
+            left: 0;
+            width: 0;
+            height: 2px;
+            background: #C1C2FA;
+            transition: width 0.3s ease;
+        }
+
+        .nav-link:hover::after {
+            width: 100%;
+        }
+
+        .nav-link:hover {
+            color: #C1C2FA;
+        }
+
+        .auth-buttons {
+            display: flex;
+            gap: 12px;
+            margin-left: 32px;
+        }
+
+        .login-btn {
+            padding: 10px 24px;
+            border: 1px solid rgba(193, 194, 250, 0.3);
+            border-radius: 16px;
+            background: transparent;
+            color: #C1C2FA;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            font-size: 0.95rem;
+        }
+
+        .login-btn:hover {
+            background: rgba(193, 194, 250, 0.1);
+            border-color: #C1C2FA;
+        }
+
+        .signup-btn {
+            padding: 10px 24px;
+            border: none;
+            border-radius: 16px;
+            background: #C1C2FA;
+            color: #0B0B1D;
+            font-weight: 500;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            font-size: 0.95rem;
+        }
+
+        .signup-btn:hover {
+            opacity: 0.9;
+            transform: translateY(-1px);
+        }
+
+        .menu-button {
+            display: none;
+            background: none;
+            border: none;
+            color: white;
+            font-size: 1.5rem;
+            cursor: pointer;
+        }
+
+        .hero-section {
+            min-height: 100vh;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            padding: 100px 20px;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .hero-content {
+            max-width: 1000px;
+            text-align: center;
+            position: relative;
+            z-index: 2;
+            padding: 0 20px;
+        }
+
+        .hero-title {
+            font-size: 4.5rem;
+            font-weight: 900;
+            margin-bottom: 32px;
+            line-height: 0.95;
+            letter-spacing: -0.06em;
+            background: linear-gradient(135deg, #FFFFFF 0%, #C1C2FA 100%);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            text-transform: none;
+            padding-bottom: 10px;
+        }
+
+        .hero-description {
+            font-size: 1.3rem;
+            font-weight: 500;
+            color: rgba(255, 255, 255, 0.9);
+            margin-bottom: 48px;
+            max-width: 800px;
+            margin-left: auto;
+            margin-right: auto;
+            line-height: 1.4;
+        }
+
+        .cta-button {
+            background: #C1C2FA;
+            color: #0B0B1D;
+            padding: 20px 40px;
+            border: none;
+            border-radius: 14px;
+            font-size: 1.3rem;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+
+        .cta-button:hover {
+            transform: translateY(-2px);
+            opacity: 0.95;
+        }
+
+        .features-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            gap: 30px;
+            padding: 100px 20px;
+            max-width: 1400px;
+            margin: 0 auto;
+        }
+
+        .feature-card {
+            background: rgba(193, 194, 250, 0.03);
+            border: 1px solid rgba(193, 194, 250, 0.1);
+            padding: 30px;
+            border-radius: 24px;
+            backdrop-filter: blur(10px);
+            transition: all 0.3s ease;
+            opacity: 0;
+            transform: translateY(30px);
+            transition: all 0.6s ease;
+        }
+
+        .feature-card.visible {
+            opacity: 1;
+            transform: translateY(0);
+        }
+
+        .feature-card:hover {
+            transform: translateY(-5px);
+            border-color: rgba(193, 194, 250, 0.2);
+            background: rgba(193, 194, 250, 0.05);
+        }
+
+        .feature-icon {
+            font-size: 2rem;
+            margin-bottom: 20px;
+            color: #9c27b0;
+        }
+
+        .feature-title {
+            font-weight: 600;
+            font-size: 1.25rem;
+            margin-bottom: 12px;
+        }
+
+        .feature-description {
+            color: rgba(255, 255, 255, 0.85);
+            font-weight: 500;
+        }
+
+        .floating-shapes {
+            position: absolute;
+            width: 100%;
+            height: 100%;
+            top: 0;
+            left: 0;
+            pointer-events: none;
+        }
+
+        .shape {
+            position: absolute;
+            background: linear-gradient(135deg, rgba(194, 181, 255, 0.1) 0%, rgba(165, 148, 255, 0.1) 100%);
+            backdrop-filter: blur(5px);
+            border-radius: 50%;
+            animation: float 20s infinite linear;
+        }
+
+        @keyframes float {
+            0% { transform: translate(0, 0) rotate(0deg); }
+            100% { transform: translate(100px, 100px) rotate(360deg); }
+        }
+
+        @media (max-width: 1200px) {
+            .hero-title {
+                font-size: 3.8rem;
+            }
+        }
+
+        @media (max-width: 768px) {
+            .nav-links {
+                display: none;
+            }
+
+            .menu-button {
+                display: block;
+            }
+
+            .hero-title {
+                font-size: 3rem;
+                letter-spacing: -0.04em;
+            }
+
+            .hero-description {
+                font-size: 1.1rem;
+                padding: 0 24px;
+            }
+
+            .features-grid {
+                grid-template-columns: 1fr;
+                padding: 50px 20px;
+            }
+        }
+
+        @media (max-width: 480px) {
+            .hero-title {
+                font-size: 2.5rem;
+                letter-spacing: -0.03em;
+            }
+            
+            .hero-description {
+                font-size: 1rem;
+            }
+        }
+
+        .accent-gradient {
+            position: absolute;
+            width: 800px;
+            height: 800px;
+            border-radius: 50%;
+            background: radial-gradient(circle, rgba(194, 181, 255, 0.1) 0%, rgba(10, 11, 20, 0) 70%);
+            z-index: -1;
+        }
+
+        .accent-top {
+            top: -400px;
+            right: -200px;
+        }
+
+        .accent-bottom {
+            bottom: -400px;
+            left: -200px;
+        }
+    </style>
+</head>
+<body>
+    <div class="accent-gradient accent-top"></div>
+    <div class="accent-gradient accent-bottom"></div>
+    
+    <header>
+        <nav>
+            <a href="#" class="logo">TrackMyStuff</a>
+            <div class="nav-links">
+                <a href="#" class="nav-link">Features</a>
+                <a href="#" class="nav-link">About</a>
+                <a href="#" class="nav-link">Contact</a>
+                <div class="auth-buttons">
+                    <button class="login-btn">Log In</button>
+                    <button class="signup-btn">Sign Up</button>
+                </div>
+            </div>
+            <button class="menu-button">☰</button>
+        </nav>
+    </header>
+
+    <section class="hero-section">
+        <div class="floating-shapes">
+            <div class="shape" style="width: 200px; height: 200px; top: 20%; left: 10%;"></div>
+            <div class="shape" style="width: 300px; height: 300px; top: 50%; left: 60%;"></div>
+            <div class="shape" style="width: 150px; height: 150px; top: 70%; left: 30%;"></div>
+        </div>
+        
+        <div class="hero-content">
+            <h1 class="hero-title">Simplify Campus Management</h1>
+            <p class="hero-description">A comprehensive platform for educational institutions to manage fee receipts and streamline lost-and-found processes. Powered by AI for efficient item matching and secure payment tracking.</p>
+            <button class="cta-button">Join Your Institution</button>
+        </div>
+    </section>
+
+    <section class="features-grid">
+        <div class="feature-card">
+            <div class="feature-icon">🔐</div>
+            <h3 class="feature-title">User Authentication & Access Control</h3>
+            <p class="feature-description">Secure role-based access system for students, staff, and administrators. Ensures data privacy and controlled permissions across the platform.</p>
+        </div>
+
+        <div class="feature-card">
+            <div class="feature-icon">📄</div>
+            <h3 class="feature-title">Digital Fee Receipt Management</h3>
+            <p class="feature-description">Secure digital storage for all fee receipts. View, download, or print receipts on demand. Never worry about losing physical documents again.</p>
+        </div>
+
+        <div class="feature-card">
+            <div class="feature-icon">🔔</div>
+            <h3 class="feature-title">Payment Reminders & Notifications</h3>
+            <p class="feature-description">Automated alerts for upcoming fee deadlines, overdue payments, and receipt downloads. Stay on top of all your financial obligations.</p>
+        </div>
+
+        <div class="feature-card" onclick="window.location.href='lost-and-found.html'" style="cursor: pointer;">
+            <div class="feature-icon">🔍</div>
+            <h3 class="feature-title">Lost-and-Found Management</h3>
+            <p class="feature-description">Centralized system for reporting lost or found items. Include detailed descriptions, photos, and location information for better tracking.</p>
+        </div>
+
+        <div class="feature-card">
+            <div class="feature-icon">🤖</div>
+            <h3 class="feature-title">AI-Powered Image Matching</h3>
+            <p class="feature-description">Advanced image recognition technology matches found items with lost reports using visual characteristics like color, shape, and size.</p>
+        </div>
+
+        <div class="feature-card">
+            <div class="feature-icon">🏷️</div>
+            <h3 class="feature-title">Item Categories & Tagging</h3>
+            <p class="feature-description">Organize items by categories (electronics, clothing, books) and add descriptive tags for enhanced searchability.</p>
+        </div>
+
+        <div class="feature-card">
+            <div class="feature-icon">🔄</div>
+            <h3 class="feature-title">Automated Item Matching</h3>
+            <p class="feature-description">Smart keyword-based system that automatically suggests potential matches between lost and found items.</p>
+        </div>
+
+        <div class="feature-card">
+            <div class="feature-icon">���</div>
+            <h3 class="feature-title">Real-Time Notifications</h3>
+            <p class="feature-description">Instant alerts when matching items are found or when someone claims a found item. Stay updated in real-time.</p>
+        </div>
+
+        <div class="feature-card">
+            <div class="feature-icon">📲</div>
+            <h3 class="feature-title">QR Code-Based Labeling</h3>
+            <p class="feature-description">Generate unique QR codes for belongings. Quick scanning enables instant owner notification when items are found.</p>
+        </div>
+
+        <div class="feature-card">
+            <div class="feature-icon">🔎</div>
+            <h3 class="feature-title">Advanced Search & Filters</h3>
+            <p class="feature-description">Powerful search functionality with filters for keywords, categories, locations, and dates. Find what you need quickly.</p>
+        </div>
+
+        <div class="feature-card">
+            <div class="feature-icon">📊</div>
+            <h3 class="feature-title">Detailed Admin Dashboard</h3>
+            <p class="feature-description">Comprehensive monitoring system for payment statuses, lost-and-found metrics, and unresolved cases.</p>
+        </div>
+
+        <div class="feature-card">
+            <div class="feature-icon">📈</div>
+            <h3 class="feature-title">Analytics & Reporting</h3>
+            <p class="feature-description">Track success rates, payment records, and generate detailed reports. Download comprehensive analytics for stakeholders.</p>
+        </div>
+
+        <div class="feature-card">
+            <div class="feature-icon">💭</div>
+            <h3 class="feature-title">Feedback & Support</h3>
+            <p class="feature-description">Built-in support system with FAQ section and feedback submission. Continuous improvement based on user input.</p>
+        </div>
+
+        <div class="feature-card">
+            <div class="feature-icon">🔍</div>
+            <h3 class="feature-title">Search & Filter Functionality</h3>
+            <p class="feature-description">Efficient search system with multiple filtering options to quickly locate specific items or transactions.</p>
+        </div>
+    </section>
+
+    <script>
+    // Intersection Observer for scroll animations
+    const observer = new IntersectionObserver((entries) => {
+        entries.forEach(entry => {
+            if (entry.isIntersecting) {
+                entry.target.classList.add('visible');
+            }
+        });
+    }, {
+        threshold: 0.1
+    });
+
+    // Observe all feature cards
+    document.addEventListener('DOMContentLoaded', () => {
+        const featureCards = document.querySelectorAll('.feature-card');
+        featureCards.forEach(card => {
+            observer.observe(card);
+        });
+    });
+    </script>
+</body>
+</html>
