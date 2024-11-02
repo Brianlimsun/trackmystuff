@@ -1,0 +1,311 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Fee Management - TrackMyStuff</title>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <style>
+        /* Base styles */
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Inter', sans-serif;
+        }
+
+        body {
+            background-color: #0B0B1D;
+            color: #ffffff;
+            line-height: 1.6;
+            overflow-x: hidden;
+        }
+
+        header {
+            position: fixed;
+            top: 20px;
+            left: 50%;
+            transform: translateX(-50%);
+            width: calc(100% - 40px);
+            max-width: 1400px;
+            padding: 16px 24px;
+            background: rgba(11, 11, 29, 0.7);
+            backdrop-filter: blur(10px);
+            z-index: 1000;
+            border: 1px solid rgba(193, 194, 250, 0.1);
+            border-radius: 24px;
+        }
+
+        nav {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .logo {
+            font-size: 1.5rem;
+            font-weight: 700;
+            color: #ffffff;
+            text-decoration: none;
+        }
+
+        .nav-links {
+            display: flex;
+            gap: 32px;
+            align-items: center;
+        }
+
+        .nav-link {
+            color: rgba(255, 255, 255, 0.7);
+            text-decoration: none;
+            font-size: 0.95rem;
+            font-weight: 500;
+            transition: color 0.3s ease;
+        }
+
+        /* Fee Management specific styles */
+        .main-content {
+            padding: 120px 20px 40px;
+            max-width: 1400px;
+            margin: 0 auto;
+        }
+
+        .page-title {
+            font-size: 2.5rem;
+            font-weight: 700;
+            margin-bottom: 30px;
+            background: linear-gradient(135deg, #FFFFFF 0%, #C1C2FA 100%);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+        }
+
+        .dashboard-grid {
+            display: grid;
+            grid-template-columns: 300px 1fr;
+            gap: 30px;
+            margin-top: 30px;
+        }
+
+        .sidebar {
+            background: rgba(193, 194, 250, 0.03);
+            border: 1px solid rgba(193, 194, 250, 0.1);
+            border-radius: 16px;
+            padding: 24px;
+            height: fit-content;
+        }
+
+        .fee-summary {
+            margin-bottom: 30px;
+        }
+
+        .summary-title {
+            font-size: 1.2rem;
+            margin-bottom: 15px;
+            color: #C1C2FA;
+        }
+
+        .amount-due {
+            font-size: 2rem;
+            font-weight: 700;
+            margin-bottom: 10px;
+        }
+
+        .due-date {
+            color: rgba(255, 255, 255, 0.7);
+            font-size: 0.9rem;
+        }
+
+        .pay-button {
+            width: 100%;
+            padding: 12px;
+            background: #C1C2FA;
+            color: #0B0B1D;
+            border: none;
+            border-radius: 12px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            margin-top: 20px;
+        }
+
+        .pay-button:hover {
+            opacity: 0.9;
+            transform: translateY(-2px);
+        }
+
+        .receipts-section {
+            background: rgba(193, 194, 250, 0.03);
+            border: 1px solid rgba(193, 194, 250, 0.1);
+            border-radius: 16px;
+            padding: 24px;
+        }
+
+        .section-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 20px;
+        }
+
+        .filter-dropdown {
+            padding: 8px 16px;
+            background: rgba(193, 194, 250, 0.05);
+            border: 1px solid rgba(193, 194, 250, 0.1);
+            border-radius: 8px;
+            color: white;
+        }
+
+        .receipts-table {
+            width: 100%;
+            border-collapse: collapse;
+        }
+
+        .receipts-table th {
+            text-align: left;
+            padding: 12px;
+            border-bottom: 1px solid rgba(193, 194, 250, 0.1);
+            color: rgba(255, 255, 255, 0.7);
+        }
+
+        .receipts-table td {
+            padding: 12px;
+            border-bottom: 1px solid rgba(193, 194, 250, 0.1);
+        }
+
+        .status-badge {
+            display: inline-block;
+            padding: 4px 12px;
+            border-radius: 20px;
+            font-size: 0.85rem;
+        }
+
+        .status-paid {
+            background: rgba(82, 196, 26, 0.1);
+            color: #52c41a;
+        }
+
+        .status-pending {
+            background: rgba(250, 173, 20, 0.1);
+            color: #faad14;
+        }
+
+        .action-button {
+            padding: 6px 12px;
+            background: transparent;
+            border: 1px solid #C1C2FA;
+            color: #C1C2FA;
+            border-radius: 8px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+
+        .action-button:hover {
+            background: rgba(193, 194, 250, 0.1);
+        }
+
+        @media (max-width: 1024px) {
+            .dashboard-grid {
+                grid-template-columns: 1fr;
+            }
+        }
+
+        @media (max-width: 768px) {
+            .receipts-table {
+                display: block;
+                overflow-x: auto;
+            }
+        }
+    </style>
+</head>
+<body>
+    <header>
+        <nav>
+            <a href="index.html" class="logo">TrackMyStuff</a>
+            <div class="nav-links">
+                <a href="lost-and-found.html" class="nav-link">Features</a>
+                <a href="#" class="nav-link">About</a>
+                <a href="#" class="nav-link">Contact</a>
+            </div>
+        </nav>
+    </header>
+
+    <main class="main-content">
+        <h1 class="page-title">Fee Management</h1>
+
+        <div class="dashboard-grid">
+            <aside class="sidebar">
+                <div class="fee-summary">
+                    <h2 class="summary-title">Current Balance</h2>
+                    <div class="amount-due">₹25,000</div>
+                    <p class="due-date">Due by: March 31, 2024</p>
+                    <button class="pay-button">Pay Now</button>
+                </div>
+
+                <div class="fee-summary">
+                    <h2 class="summary-title">Payment History</h2>
+                    <p>Total Paid: ₹75,000</p>
+                    <p>Last Payment: Feb 15, 2024</p>
+                </div>
+            </aside>
+
+            <div class="receipts-section">
+                <div class="section-header">
+                    <h2>Fee Receipts</h2>
+                    <select class="filter-dropdown">
+                        <option value="all">All Receipts</option>
+                        <option value="paid">Paid</option>
+                        <option value="pending">Pending</option>
+                    </select>
+                </div>
+
+                <table class="receipts-table">
+                    <thead>
+                        <tr>
+                            <th>Receipt ID</th>
+                            <th>Date</th>
+                            <th>Description</th>
+                            <th>Amount</th>
+                            <th>Status</th>
+                            <th>Action</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr>
+                            <td>#FEE001</td>
+                            <td>Mar 15, 2024</td>
+                            <td>Semester Fee</td>
+                            <td>₹25,000</td>
+                            <td><span class="status-badge status-pending">Pending</span></td>
+                            <td><button class="action-button">Pay</button></td>
+                        </tr>
+                        <tr>
+                            <td>#FEE002</td>
+                            <td>Feb 15, 2024</td>
+                            <td>Library Fee</td>
+                            <td>₹5,000</td>
+                            <td><span class="status-badge status-paid">Paid</span></td>
+                            <td><button class="action-button">Download</button></td>
+                        </tr>
+                        <tr>
+                            <td>#FEE003</td>
+                            <td>Jan 15, 2024</td>
+                            <td>Lab Fee</td>
+                            <td>₹10,000</td>
+                            <td><span class="status-badge status-paid">Paid</span></td>
+                            <td><button class="action-button">Download</button></td>
+                        </tr>
+                        <tr>
+                            <td>#FEE004</td>
+                            <td>Dec 15, 2023</td>
+                            <td>Exam Fee</td>
+                            <td>₹2,000</td>
+                            <td><span class="status-badge status-paid">Paid</span></td>
+                            <td><button class="action-button">Download</button></td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </main>
+</body>
+</html> 
