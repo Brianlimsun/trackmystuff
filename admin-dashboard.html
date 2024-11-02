@@ -1,0 +1,416 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Admin Dashboard - TrackMyStuff</title>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <style>
+        /* Base styles */
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Inter', sans-serif;
+        }
+
+        body {
+            background-color: #0B0B1D;
+            color: #ffffff;
+            line-height: 1.6;
+            overflow-x: hidden;
+        }
+
+        header {
+            position: fixed;
+            top: 20px;
+            left: 50%;
+            transform: translateX(-50%);
+            width: calc(100% - 40px);
+            max-width: 1400px;
+            padding: 16px 24px;
+            background: rgba(11, 11, 29, 0.7);
+            backdrop-filter: blur(10px);
+            z-index: 1000;
+            border: 1px solid rgba(193, 194, 250, 0.1);
+            border-radius: 24px;
+        }
+
+        /* Dashboard specific styles */
+        .dashboard-container {
+            display: block;
+            min-height: 100vh;
+            padding-top: 100px;
+            max-width: 1400px;
+            margin: 0 auto;
+            padding-left: 20px;
+            padding-right: 20px;
+        }
+
+        .main-content {
+            padding: 30px;
+            width: 100%;
+        }
+
+        .dashboard-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 30px;
+        }
+
+        .stats-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(240px, 1fr));
+            gap: 20px;
+            margin-bottom: 30px;
+        }
+
+        .stat-card {
+            background: rgba(193, 194, 250, 0.03);
+            border: 1px solid rgba(193, 194, 250, 0.1);
+            border-radius: 16px;
+            padding: 20px;
+        }
+
+        .stat-title {
+            color: rgba(255, 255, 255, 0.7);
+            font-size: 0.9rem;
+            margin-bottom: 8px;
+        }
+
+        .stat-value {
+            font-size: 2rem;
+            font-weight: 700;
+            color: #C1C2FA;
+        }
+
+        .stat-change {
+            font-size: 0.9rem;
+            color: #52c41a;
+        }
+
+        .chart-container {
+            display: grid;
+            grid-template-columns: 2fr 1fr;
+            gap: 20px;
+            margin-bottom: 30px;
+        }
+
+        .chart-card {
+            background: rgba(193, 194, 250, 0.03);
+            border: 1px solid rgba(193, 194, 250, 0.1);
+            border-radius: 16px;
+            padding: 20px;
+            height: 400px;
+            position: relative;
+        }
+
+        .chart-title {
+            color: #C1C2FA;
+            margin-bottom: 20px;
+        }
+
+        .recent-activity {
+            background: rgba(193, 194, 250, 0.03);
+            border: 1px solid rgba(193, 194, 250, 0.1);
+            border-radius: 16px;
+            padding: 20px;
+        }
+
+        .activity-item {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            padding: 12px 0;
+            border-bottom: 1px solid rgba(193, 194, 250, 0.1);
+        }
+
+        .activity-icon {
+            width: 40px;
+            height: 40px;
+            background: rgba(193, 194, 250, 0.1);
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: #C1C2FA;
+        }
+
+        .activity-details {
+            flex: 1;
+        }
+
+        .activity-time {
+            color: rgba(255, 255, 255, 0.5);
+            font-size: 0.9rem;
+        }
+
+        .chart-placeholder {
+            width: 100%;
+            height: 300px;
+            background: rgba(193, 194, 250, 0.05);
+            border-radius: 12px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: rgba(255, 255, 255, 0.5);
+        }
+
+        @media (max-width: 1024px) {
+            .dashboard-container {
+                grid-template-columns: 1fr;
+            }
+            .sidebar {
+                display: none;
+            }
+            .chart-container {
+                grid-template-columns: 1fr;
+            }
+        }
+
+        /* Updated nav styles */
+        nav {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            max-width: 1400px;
+            margin: 0 auto;
+        }
+
+        .logo {
+            font-size: 1.5rem;
+            font-weight: 700;
+            color: #ffffff;
+            text-decoration: none;
+        }
+
+        .nav-links {
+            display: flex;
+            gap: 32px;
+            align-items: center;
+        }
+
+        .nav-link {
+            color: rgba(255, 255, 255, 0.7);
+            text-decoration: none;
+            font-size: 0.95rem;
+            font-weight: 500;
+            transition: color 0.3s ease;
+            position: relative;
+        }
+
+        .nav-link::after {
+            content: '';
+            position: absolute;
+            bottom: -4px;
+            left: 0;
+            width: 0;
+            height: 2px;
+            background: #C1C2FA;
+            transition: width 0.3s ease;
+        }
+
+        .nav-link:hover::after {
+            width: 100%;
+        }
+
+        .nav-link:hover {
+            color: #ffffff;
+        }
+
+        .menu-button {
+            display: none;
+            background: none;
+            border: none;
+            color: white;
+            font-size: 1.5rem;
+            cursor: pointer;
+        }
+
+        @media (max-width: 768px) {
+            .menu-button {
+                display: block;
+            }
+            .nav-links {
+                display: none;
+            }
+        }
+
+        canvas {
+            max-height: 300px;
+            width: 100% !important;
+        }
+    </style>
+</head>
+<body>
+    <header>
+        <nav>
+            <a href="index.html" class="logo">TrackMyStuff</a>
+            <div class="nav-links">
+                <a href="lost-and-found.html" class="nav-link">Features</a>
+                <a href="#" class="nav-link">About</a>
+                <a href="#" class="nav-link">Contact</a>
+            </div>
+            <button class="menu-button">☰</button>
+        </nav>
+    </header>
+
+    <div class="dashboard-container">
+        <main class="main-content">
+            <div class="dashboard-header">
+                <h1>Admin Dashboard</h1>
+                <div class="date-range">Last 30 Days</div>
+            </div>
+
+            <div class="stats-grid">
+                <div class="stat-card">
+                    <div class="stat-title">Total Lost Items</div>
+                    <div class="stat-value">247</div>
+                    <div class="stat-change">+12% vs last month</div>
+                </div>
+                <div class="stat-card">
+                    <div class="stat-title">Found Items</div>
+                    <div class="stat-value">183</div>
+                    <div class="stat-change">+8% vs last month</div>
+                </div>
+                <div class="stat-card">
+                    <div class="stat-title">Success Rate</div>
+                    <div class="stat-value">74%</div>
+                    <div class="stat-change">+5% vs last month</div>
+                </div>
+                <div class="stat-card">
+                    <div class="stat-title">Active Users</div>
+                    <div class="stat-value">1,892</div>
+                    <div class="stat-change">+15% vs last month</div>
+                </div>
+            </div>
+
+            <div class="chart-container">
+                <div class="chart-card">
+                    <h2 class="chart-title">Lost vs Found Items Trend</h2>
+                    <canvas id="trendChart"></canvas>
+                </div>
+                <div class="chart-card">
+                    <h2 class="chart-title">Item Categories</h2>
+                    <canvas id="categoryChart"></canvas>
+                </div>
+            </div>
+
+            <div class="recent-activity">
+                <h2 class="chart-title">Recent Activity</h2>
+                <div class="activity-item">
+                    <div class="activity-icon">📱</div>
+                    <div class="activity-details">
+                        <div>iPhone 13 Pro reported as found</div>
+                        <div class="activity-time">2 minutes ago</div>
+                    </div>
+                </div>
+                <div class="activity-item">
+                    <div class="activity-icon">💼</div>
+                    <div class="activity-details">
+                        <div>Laptop bag matched with lost report</div>
+                        <div class="activity-time">15 minutes ago</div>
+                    </div>
+                </div>
+                <div class="activity-item">
+                    <div class="activity-icon">🎒</div>
+                    <div class="activity-details">
+                        <div>New lost item reported: Black Backpack</div>
+                        <div class="activity-time">1 hour ago</div>
+                    </div>
+                </div>
+            </div>
+        </main>
+    </div>
+
+    <script>
+        // Wait for the DOM to be fully loaded
+        document.addEventListener('DOMContentLoaded', function() {
+            // Line Chart
+            const trendChart = new Chart(document.getElementById('trendChart'), {
+                type: 'line',
+                data: {
+                    labels: ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun'],
+                    datasets: [{
+                        label: 'Lost Items',
+                        data: [65, 59, 80, 81, 56, 55],
+                        borderColor: '#C1C2FA',
+                        tension: 0.4,
+                        fill: false
+                    }, {
+                        label: 'Found Items',
+                        data: [45, 49, 60, 71, 46, 45],
+                        borderColor: '#52c41a',
+                        tension: 0.4,
+                        fill: false
+                    }]
+                },
+                options: {
+                    responsive: true,
+                    maintainAspectRatio: false,
+                    plugins: {
+                        legend: {
+                            position: 'top',
+                            labels: {
+                                color: 'rgba(255, 255, 255, 0.7)'
+                            }
+                        }
+                    },
+                    scales: {
+                        y: {
+                            beginAtZero: true,
+                            grid: {
+                                color: 'rgba(255, 255, 255, 0.1)'
+                            },
+                            ticks: {
+                                color: 'rgba(255, 255, 255, 0.7)'
+                            }
+                        },
+                        x: {
+                            grid: {
+                                color: 'rgba(255, 255, 255, 0.1)'
+                            },
+                            ticks: {
+                                color: 'rgba(255, 255, 255, 0.7)'
+                            }
+                        }
+                    }
+                }
+            });
+
+            // Pie Chart
+            const categoryChart = new Chart(document.getElementById('categoryChart'), {
+                type: 'doughnut',
+                data: {
+                    labels: ['Electronics', 'Books', 'Clothing', 'Accessories', 'Others'],
+                    datasets: [{
+                        data: [30, 20, 25, 15, 10],
+                        backgroundColor: [
+                            '#C1C2FA',
+                            '#52c41a',
+                            '#faad14',
+                            '#f5222d',
+                            '#722ed1'
+                        ],
+                        borderWidth: 0
+                    }]
+                },
+                options: {
+                    responsive: true,
+                    maintainAspectRatio: false,
+                    plugins: {
+                        legend: {
+                            position: 'right',
+                            labels: {
+                                color: 'rgba(255, 255, 255, 0.7)'
+                            }
+                        }
+                    }
+                }
+            });
+        });
+    </script>
+</body>
+</html> 

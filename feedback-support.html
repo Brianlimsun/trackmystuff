@@ -1,0 +1,355 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Feedback & Support - TrackMyStuff</title>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <style>
+        /* Base styles */
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Inter', sans-serif;
+        }
+
+        body {
+            background-color: #0B0B1D;
+            color: #ffffff;
+            line-height: 1.6;
+            overflow-x: hidden;
+        }
+
+        header {
+            position: fixed;
+            top: 20px;
+            left: 50%;
+            transform: translateX(-50%);
+            width: calc(100% - 40px);
+            max-width: 1400px;
+            padding: 16px 24px;
+            background: rgba(11, 11, 29, 0.7);
+            backdrop-filter: blur(10px);
+            z-index: 1000;
+            border: 1px solid rgba(193, 194, 250, 0.1);
+            border-radius: 24px;
+        }
+
+        nav {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .logo {
+            font-size: 1.5rem;
+            font-weight: 700;
+            color: #ffffff;
+            text-decoration: none;
+        }
+
+        .nav-links {
+            display: flex;
+            gap: 32px;
+            align-items: center;
+        }
+
+        .nav-link {
+            color: rgba(255, 255, 255, 0.7);
+            text-decoration: none;
+            font-size: 0.95rem;
+            font-weight: 500;
+            transition: color 0.3s ease;
+        }
+
+        /* Feedback specific styles */
+        .main-content {
+            padding: 120px 20px 40px;
+            max-width: 1400px;
+            margin: 0 auto;
+            display: grid;
+            grid-template-columns: 1fr 300px;
+            gap: 30px;
+        }
+
+        @media (max-width: 1024px) {
+            .main-content {
+                grid-template-columns: 1fr;
+            }
+        }
+
+        .page-title {
+            font-size: 2.5rem;
+            font-weight: 700;
+            margin-bottom: 30px;
+            background: linear-gradient(135deg, #FFFFFF 0%, #C1C2FA 100%);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            grid-column: 1 / -1;
+        }
+
+        .feedback-form {
+            background: rgba(193, 194, 250, 0.03);
+            border: 1px solid rgba(193, 194, 250, 0.1);
+            border-radius: 24px;
+            padding: 40px;
+        }
+
+        .form-group {
+            margin-bottom: 24px;
+        }
+
+        .form-label {
+            display: block;
+            margin-bottom: 8px;
+            color: #C1C2FA;
+            font-weight: 500;
+        }
+
+        .form-input, .form-select, .form-textarea {
+            width: 100%;
+            padding: 12px;
+            background: rgba(255, 255, 255, 0.05);
+            border: 1px solid rgba(193, 194, 250, 0.2);
+            border-radius: 12px;
+            color: white;
+            font-size: 1rem;
+        }
+
+        .form-textarea {
+            min-height: 150px;
+            resize: vertical;
+        }
+
+        .form-input:focus, .form-select:focus, .form-textarea:focus {
+            outline: none;
+            border-color: #C1C2FA;
+        }
+
+        .submit-btn {
+            background: #C1C2FA;
+            color: #0B0B1D;
+            padding: 12px 24px;
+            border: none;
+            border-radius: 12px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            width: 100%;
+        }
+
+        .submit-btn:hover {
+            opacity: 0.9;
+            transform: translateY(-2px);
+        }
+
+        .faq-section {
+            background: rgba(193, 194, 250, 0.03);
+            border: 1px solid rgba(193, 194, 250, 0.1);
+            border-radius: 24px;
+            padding: 24px;
+        }
+
+        .faq-title {
+            color: #C1C2FA;
+            margin-bottom: 20px;
+            font-size: 1.2rem;
+        }
+
+        .faq-item {
+            border-bottom: 1px solid rgba(193, 194, 250, 0.1);
+            padding: 16px 0;
+        }
+
+        .faq-item:last-child {
+            border-bottom: none;
+        }
+
+        .faq-question {
+            font-weight: 600;
+            margin-bottom: 8px;
+            cursor: pointer;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .faq-answer {
+            color: rgba(255, 255, 255, 0.7);
+            font-size: 0.9rem;
+            display: none;
+            padding-top: 8px;
+        }
+
+        .faq-item.active .faq-answer {
+            display: block;
+        }
+
+        .rating-group {
+            display: flex;
+            gap: 12px;
+            margin-bottom: 24px;
+        }
+
+        .rating-btn {
+            flex: 1;
+            padding: 12px;
+            background: rgba(193, 194, 250, 0.05);
+            border: 1px solid rgba(193, 194, 250, 0.2);
+            border-radius: 12px;
+            color: white;
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+
+        .rating-btn:hover, .rating-btn.active {
+            background: #C1C2FA;
+            color: #0B0B1D;
+        }
+
+        .contact-info {
+            margin-top: 24px;
+            padding-top: 24px;
+            border-top: 1px solid rgba(193, 194, 250, 0.1);
+        }
+
+        .contact-item {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            margin-bottom: 16px;
+            color: rgba(255, 255, 255, 0.7);
+        }
+
+        .contact-icon {
+            color: #C1C2FA;
+            font-size: 1.2rem;
+        }
+    </style>
+</head>
+<body>
+    <header>
+        <nav>
+            <a href="index.html" class="logo">TrackMyStuff</a>
+            <div class="nav-links">
+                <a href="lost-and-found.html" class="nav-link">Features</a>
+                <a href="#" class="nav-link">About</a>
+                <a href="#" class="nav-link">Contact</a>
+            </div>
+        </nav>
+    </header>
+
+    <main class="main-content">
+        <h1 class="page-title">Feedback & Support</h1>
+
+        <div class="feedback-form">
+            <form id="feedbackForm">
+                <div class="form-group">
+                    <label class="form-label">How would you rate your experience?</label>
+                    <div class="rating-group">
+                        <button type="button" class="rating-btn">😞</button>
+                        <button type="button" class="rating-btn">😐</button>
+                        <button type="button" class="rating-btn">🙂</button>
+                        <button type="button" class="rating-btn">😊</button>
+                        <button type="button" class="rating-btn">😍</button>
+                    </div>
+                </div>
+
+                <div class="form-group">
+                    <label class="form-label">Category</label>
+                    <select class="form-select">
+                        <option value="">Select a category</option>
+                        <option value="bug">Bug Report</option>
+                        <option value="feature">Feature Request</option>
+                        <option value="support">Support Question</option>
+                        <option value="other">Other</option>
+                    </select>
+                </div>
+
+                <div class="form-group">
+                    <label class="form-label">Subject</label>
+                    <input type="text" class="form-input" placeholder="Brief description of your feedback">
+                </div>
+
+                <div class="form-group">
+                    <label class="form-label">Your Message</label>
+                    <textarea class="form-textarea" placeholder="Please provide detailed feedback..."></textarea>
+                </div>
+
+                <div class="form-group">
+                    <label class="form-label">Email (for follow-up)</label>
+                    <input type="email" class="form-input" placeholder="your@email.com">
+                </div>
+
+                <button type="submit" class="submit-btn">Submit Feedback</button>
+            </form>
+
+            <div class="contact-info">
+                <h3 class="faq-title">Other Ways to Reach Us</h3>
+                <div class="contact-item">
+                    <span class="contact-icon">📧</span>
+                    <span>support@trackmystuff.com</span>
+                </div>
+                <div class="contact-item">
+                    <span class="contact-icon">📞</span>
+                    <span>+1 (555) 123-4567</span>
+                </div>
+                <div class="contact-item">
+                    <span class="contact-icon">💬</span>
+                    <span>Live Chat (Mon-Fri, 9AM-5PM)</span>
+                </div>
+            </div>
+        </div>
+
+        <div class="faq-section">
+            <h2 class="faq-title">Frequently Asked Questions</h2>
+            <div class="faq-item">
+                <div class="faq-question">
+                    How do I report a lost item?
+                    <span>+</span>
+                </div>
+                <div class="faq-answer">
+                    Navigate to the Lost & Found section, click on "Report Lost Item", and fill in the details about your lost item including description, location, and date.
+                </div>
+            </div>
+            <div class="faq-item">
+                <div class="faq-question">
+                    How do QR codes work?
+                    <span>+</span>
+                </div>
+                <div class="faq-answer">
+                    Generate a unique QR code for your item, attach it, and when someone finds it, they can scan the code to access your contact information.
+                </div>
+            </div>
+            <div class="faq-item">
+                <div class="faq-question">
+                    Is my data secure?
+                    <span>+</span>
+                </div>
+                <div class="faq-answer">
+                    Yes, we use industry-standard encryption and security measures to protect all user data and personal information.
+                </div>
+            </div>
+        </div>
+    </main>
+
+    <script>
+        // FAQ Toggle
+        document.querySelectorAll('.faq-question').forEach(question => {
+            question.addEventListener('click', () => {
+                const item = question.parentElement;
+                item.classList.toggle('active');
+                question.querySelector('span').textContent = item.classList.contains('active') ? '-' : '+';
+            });
+        });
+
+        // Rating Buttons
+        document.querySelectorAll('.rating-btn').forEach(btn => {
+            btn.addEventListener('click', () => {
+                
+            });
+        });
+    </script>
+</body>
+</html> 
